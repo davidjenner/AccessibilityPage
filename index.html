@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Summarizer</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @font-face {
+            font-family: 'OpenDyslexic';
+            src: url('OpenDyslexic-Regular.otf') format('opentype');
+        }
+        body {
+            font-family: Arial, sans-serif; /* Fallback font */
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #output {
+            margin-top: 20px;
+            font-family: 'OpenDyslexic', sans-serif;
+            display: none;
+        }
+        .pastel {
+            background-color: #f0f0f0; /* Soft pastel color background */
+            color: #000000; /* Black text color */
+            transition: background-color 0.5s ease; /* Smooth transition for background color change */
+        }
+        .invert {
+            background-color: #000000; /* Black background color */
+            color: #ffff00; /* Yellow text color */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OpenDyslexic Text Converter</h1>
+        <textarea id="inputText" placeholder="Paste or type your text here..."></textarea>
+        <button onclick="convertToOpenDyslexic()">Convert to OpenDyslexic</button>
+        <button onclick="togglePastel()">Toggle Pastel</button>
+        <button onclick="toggleInvert()">Toggle Invert</button>
+        <button onclick="toggleFontSize('increase')">Increase Text Size</button>
+        <button onclick="toggleFontSize('decrease')">Decrease Text Size</button>
+        <div id="output"></div>
+        <button onclick="toggleReadText()">Read Text</button>
+    </div>
+
+
+    <script>
+        function convertToOpenDyslexic() {
+            var inputText = document.getElementById("inputText").value;
+            var outputArea = document.getElementById("output");
+
+            outputArea.innerText = inputText;
+            outputArea.style.display = "block";
+        }
+
+        function togglePastel() {
+            document.body.classList.toggle("pastel");
+        }
+
+        function toggleInvert() {
+            document.body.classList.toggle("invert");
+        }
+
+        function toggleFontSize(action) {
+            var outputArea = document.getElementById("output");
+            var currentFontSize = parseFloat(window.getComputedStyle(outputArea, null).getPropertyValue('font-size'));
+
+            if (action === 'increase') {
+                outputArea.style.fontSize = (currentFontSize + 2) + 'px'; // Increase font size by 2px
+            } else if (action === 'decrease') {
+                outputArea.style.fontSize = (currentFontSize - 2) + 'px'; // Decrease font size by 2px
+            }
+        }
+    </script>
+
+<script>
+    let isReading = false;
+    let speech = new SpeechSynthesisUtterance();
+
+    function convertToOpenDyslexic() {
+        var inputText = document.getElementById("inputText").value;
+        var outputArea = document.getElementById("output");
+
+        outputArea.innerText = inputText;
+        outputArea.style.display = "block";
+    }
+
+    function togglePastel() {
+        document.body.classList.toggle("pastel");
+    }
+
+    function toggleInvert() {
+        document.body.classList.toggle("invert");
+    }
+
+    function toggleReadText() {
+        if (!isReading) {
+            startReading();
+        } else {
+            stopReading();
+        }
+    }
+
+    function startReading() {
+        var textToRead = document.getElementById("output").innerText;
+        speech.text = textToRead;
+        window.speechSynthesis.speak(speech);
+        isReading = true;
+        document.getElementById("readButton").innerText = "Stop Reading";
+    }
+
+    function stopReading() {
+        window.speechSynthesis.cancel();
+        isReading = false;
+        document.getElementById("readButton").innerText = "Read Text";
+    }
+</script>
+</body>
+</html>
