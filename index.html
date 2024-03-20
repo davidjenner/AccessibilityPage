@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accessibility Page - Covert to Open Dyslexic</title>
+    <title>Text Summarizer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
         @font-face {
             font-family: 'OpenDyslexic';
-            src: url('OpenDyslexic-Regular.otf') format('opentype');
+            src: url('font/OpenDyslexic-Regular.otf') format('opentype');
         }
         body {
-            font-family: Arial, sans-serif; /* Fallback font */
+            font-family: "OpenDyslexic" ,Arial, sans-serif; /* Fallback font */
         }
         .container {
             max-width: 600px;
@@ -38,19 +39,17 @@
     <div class="container">
         <h1>OpenDyslexic Text Converter</h1>
         <textarea id="inputText" placeholder="Paste or type your text here..."></textarea>
-        <button onclick="convertToOpenDyslexic()">Convert to OpenDyslexic</button>
-        <button onclick="togglePastel()">Toggle Pastel</button>
-        <button onclick="toggleInvert()">Toggle Invert</button>
-        <button onclick="toggleFontSize('increase')">Increase Text Size</button>
-        <button onclick="toggleFontSize('decrease')">Decrease Text Size</button>
+        <button onclick="convertToOpenDyslexic()"><i class="fas fa-file-import"></i> Convert to OpenDyslexic</button>
+        <button onclick="togglePastel()"><i class="fas fa-paint-brush"></i> Toggle Pastel</button>
+        <button onclick="toggleInvert()"><i class="fas fa-adjust"></i> Toggle Invert</button>
+        <button onclick="toggleFontSize('increase')"><i class="fas fa-search-plus"></i> Increase Text Size</button>
+        <button onclick="toggleFontSize('decrease')"><i class="fas fa-search-minus"></i> Decrease Text Size</button>
+        <button onclick="pasteFromClipboard()"><i class="fas fa-clipboard"></i> Paste from Clipboard</button>
         <div id="output"></div>
-        <button onclick="toggleReadText()">Read Text</button>
+        <button onclick="toggleReadText()"><i class="fas fa-volume-up"></i> Read Text</button>
     </div>
 
-<div class="container">
-        <p>By David Jenner</p>
-    </div>
-
+<p>By David Jenner</p>
     <script>
         function convertToOpenDyslexic() {
             var inputText = document.getElementById("inputText").value;
@@ -77,6 +76,15 @@
             } else if (action === 'decrease') {
                 outputArea.style.fontSize = (currentFontSize - 2) + 'px'; // Decrease font size by 2px
             }
+        }
+        function pasteFromClipboard() {
+            navigator.clipboard.readText()
+                .then(text => {
+                    document.getElementById("inputText").value = text;
+                })
+                .catch(err => {
+                    console.error('Failed to read clipboard contents: ', err);
+                });
         }
     </script>
 
@@ -122,6 +130,5 @@
         document.getElementById("readButton").innerText = "Read Text";
     }
 </script>
-
 </body>
 </html>
