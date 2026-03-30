@@ -3,38 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accessibility Page</title>
+    <title>Accessibility Focused Page</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .high-contrast {
+            background-color: black;
+            color: white;
+        }
+        .dyslexia-friendly {
+            font-family: 'OpenDyslexic', sans-serif;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>Welcome to the Accessibility Page</h1>
+        <h1>Accessibility Features</h1>
     </header>
     <main>
         <section>
-            <h2>Features</h2>
-            <button id="featureButton">Learn More</button>
-            <div id="errorContainer" role="alert" aria-live="assertive"></div>
+            <h2>Resize Text</h2>
+            <button onclick="resizeText('increase')">A+</button>
+            <button onclick="resizeText('decrease')">A-</button>
         </section>
-        <footer>
-            <p>&copy; 2026 Accessibility Page</p>
-        </footer>
+        <section>
+            <h2>Color Contrast Modes</h2>
+            <button onclick="toggleContrast()">Toggle High Contrast</button>
+        </section>
+        <section>
+            <h2>Dyslexia-Friendly Font</h2>
+            <button onclick="toggleDyslexiaFont()">Toggle Dyslexia Font</button>
+        </section>
+        <section>
+            <h2>Text-to-Speech</h2>
+            <button onclick="textToSpeech()">Read Text</button>
+        </section>
     </main>
+    <footer>
+        <p>&copy; 2026 Accessibility Page</p>
+    </footer>
     <script>
-        document.getElementById('featureButton').addEventListener('click', function() {
-            try {
-                // Reference to a function or feature update
-                updateFeature();
-            } catch (error) {
-                document.getElementById('errorContainer').textContent = 'An error occurred: ' + error.message;
+        let currentSize = 16;
+        const resizeText = (action) => {
+            const body = document.body;
+            if (action === 'increase') {
+                currentSize++;
+            } else {
+                currentSize--;
             }
-        });
-
-        // Removed duplicate function and ensured proper functionality
-        function updateFeature() {
-            // Functionality to update features
-        }
+            body.style.fontSize = currentSize + 'px';
+        };
+        let highContrast = false;
+        const toggleContrast = () => {
+            document.body.classList.toggle('high-contrast');
+        };
+        let dyslexiaMode = false;
+        const toggleDyslexiaFont = () => {
+            document.body.classList.toggle('dyslexia-friendly');
+        };
+        const textToSpeech = () => {
+            const utterance = new SpeechSynthesisUtterance(document.body.innerText);
+            window.speechSynthesis.speak(utterance);
+        };
     </script>
 </body>
 </html>
