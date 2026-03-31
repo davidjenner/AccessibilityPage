@@ -4,137 +4,284 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpenDyslexic Text Converter</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <meta name="description" content="Make any text easier to read with the OpenDyslexic font — designed to improve readability for people with dyslexia.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
         @font-face {
             font-family: 'OpenDyslexic';
             src: url('OpenDyslexic-Regular.otf') format('opentype');
-        }
-        body {
-            font-family: "OpenDyslexic", Arial, sans-serif; /* Fallback font */
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        #output {
-            margin-top: 20px;
-            font-family: "OpenDyslexic", sans-serif;
-            display: none;
-        }
-        .pastel {
-            background-color: #f0f0f0; /* Soft pastel color background */
-            color: #000000; /* Black text color */
-            transition: background-color 0.5s ease; /* Smooth transition for background color change */
-        }
-        .invert {
-            background-color: #000000; /* Black background color */
-            color: #ffff00; /* Yellow text color */
+            font-display: swap;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>OpenDyslexic Text Converter</h1>
-        <p>(Beta)</p>
-        <textarea id="inputText" placeholder="Paste or type your text here..."></textarea>
-        <button onclick="pasteFromClipboard()"><i class="fas fa-clipboard"></i> Paste from Clipboard</button>
-        <button onclick="convertToOpenDyslexic()"><i class="fas fa-file-import"></i> Convert to OpenDyslexic</button>
-        <button onclick="togglePastel()"><i class="fas fa-paint-brush"></i> Toggle Pastel</button>
-        <button onclick="toggleInvert()"><i class="fas fa-adjust"></i> Toggle Invert</button>
-        <button onclick="toggleFontSize('increase')"><i class="fas fa-search-plus"></i> Increase Text Size</button>
-        <button onclick="toggleFontSize('decrease')"><i class="fas fa-search-minus"></i> Decrease Text Size</button>
-        <button onclick="toggleReadText()"><i class="fas fa-volume-up"></i> Read Text</button>
-        <div id="output"></div>
-    </div>
 
-<div  class="container">
-    <p>By David Jenner | 2024</p><br>
-    <a href="https://github.com/davidjenner/AccessibilityPage/issues">Feedback</a>
-</div>
-    
-    
+    <!-- Header -->
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="logo">
+                <i class="fas fa-eye"></i>
+                <span>OpenDyslexic Converter</span>
+            </div>
+            <span class="header-badge">Beta</span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Hero -->
+        <section class="hero">
+            <h1>Make Text Easier to Read</h1>
+            <p class="hero-subtitle">Convert any text to the OpenDyslexic font — specifically designed to increase readability and reduce errors for people with dyslexia.</p>
+        </section>
+
+        <!-- Input Card -->
+        <div class="card input-card">
+            <div class="card-header">
+                <h2><i class="fas fa-keyboard"></i> Your Text</h2>
+                <button class="btn-ghost" onclick="pasteFromClipboard()" title="Paste from clipboard">
+                    <i class="fas fa-clipboard"></i> Paste
+                </button>
+            </div>
+            <textarea
+                id="inputText"
+                placeholder="Paste or type your text here...&#10;&#10;Try pasting something from a website, document, or email — then hit Convert below."
+                oninput="updateCharCount()"
+                spellcheck="true"
+                aria-label="Text input area"
+            ></textarea>
+            <div class="input-footer">
+                <span id="charCount" class="char-count">0 characters</span>
+                <button class="btn-primary" onclick="convertToOpenDyslexic()">
+                    <i class="fas fa-magic"></i> Convert to OpenDyslexic
+                </button>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-bar">
+            <div class="control-group">
+                <span class="control-label"><i class="fas fa-universal-access"></i> Accessibility</span>
+                <div class="btn-group">
+                    <button class="btn-control" onclick="togglePastel()" id="pastelBtn" title="Toggle soft pastel background">
+                        <i class="fas fa-paint-brush"></i> Pastel
+                    </button>
+                    <button class="btn-control" onclick="toggleInvert()" id="invertBtn" title="Toggle high contrast mode">
+                        <i class="fas fa-adjust"></i> High Contrast
+                    </button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <span class="control-label"><i class="fas fa-text-height"></i> Text Size</span>
+                <div class="btn-group">
+                    <button class="btn-control" onclick="toggleFontSize('decrease')" title="Decrease font size">
+                        <i class="fas fa-search-minus"></i> Smaller
+                    </button>
+                    <button class="btn-control" onclick="toggleFontSize('increase')" title="Increase font size">
+                        <i class="fas fa-search-plus"></i> Larger
+                    </button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <span class="control-label"><i class="fas fa-volume-up"></i> Audio</span>
+                <div class="btn-group">
+                    <button class="btn-control" id="readButton" onclick="toggleReadText()" title="Read text aloud">
+                        <i class="fas fa-play" id="readIcon"></i> Read Aloud
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Output Card -->
+        <div class="card output-card" id="outputCard" style="display:none;">
+            <div class="card-header">
+                <h2><i class="fas fa-eye"></i> OpenDyslexic Output</h2>
+                <button class="btn-ghost" onclick="copyOutput()" title="Copy output to clipboard">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+            </div>
+            <div id="output" aria-live="polite" aria-label="Converted text output"></div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-top">
+
+                <div class="footer-brand">
+                    <div class="logo">
+                        <i class="fas fa-eye"></i>
+                        <span>OpenDyslexic Converter</span>
+                    </div>
+                    <p>Making text accessible for everyone. Free to use, always.</p>
+                </div>
+
+                <div class="footer-feedback">
+                    <h3>Leave Feedback</h3>
+                    <p>Found a bug or have a suggestion? I'd love to hear from you.</p>
+                    <a href="https://github.com/davidjenner/AccessibilityPage/issues" target="_blank" rel="noopener noreferrer" class="btn-feedback">
+                        <i class="fab fa-github"></i> Open an Issue on GitHub
+                    </a>
+                </div>
+
+                <div class="footer-social">
+                    <h3>Other Projects</h3>
+                    <div class="social-links">
+                        <a href="https://timeboxadhd.netlify.app/" target="_blank" rel="noopener noreferrer" class="social-link" title="TimeBox ADHD" aria-label="TimeBox ADHD">
+                            <i class="fas fa-clock"></i>
+                        </a>
+                        <a href="https://outseek.davidjenner.workers.dev/" target="_blank" rel="noopener noreferrer" class="social-link" title="Outseek" aria-label="Outseek">
+                            <i class="fas fa-search"></i>
+                        </a>
+                        <a href="https://github.com/davidjenner" target="_blank" rel="noopener noreferrer" title="GitHub" class="social-link" aria-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://buymeacoffee.com/godavid" target="_blank" rel="noopener noreferrer" title="Buy Me a Coffee" class="social-link" aria-label="Buy Me a Coffee">
+                            <i class="fas fa-coffee"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 David Jenner. All rights reserved.</p>
+                <p class="footer-note"><i class="fas fa-heart" style="color:#f87171;font-size:0.75rem;"></i> Built with accessibility in mind.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast notification -->
+    <div id="toast" role="status" aria-live="polite"></div>
+
+    <!-- Buy Me a Coffee Widget -->
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="godavid" data-description="Support me on Buy me a coffee!" data-message="" data-color="#FF813F" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+
     <script>
+        let isReading = false;
+        let speech = new SpeechSynthesisUtterance();
+
+        function updateCharCount() {
+            const text = document.getElementById('inputText').value;
+            const count = text.length;
+            document.getElementById('charCount').textContent =
+                count === 0 ? '0 characters' :
+                count === 1 ? '1 character' :
+                `${count.toLocaleString()} characters`;
+        }
+
         function convertToOpenDyslexic() {
-            var inputText = document.getElementById("inputText").value;
-            var outputArea = document.getElementById("output");
-
-            outputArea.innerText = inputText;
-            outputArea.style.display = "block";
-        }
-
-        function togglePastel() {
-            document.body.classList.toggle("pastel");
-        }
-
-        function toggleInvert() {
-            document.body.classList.toggle("invert");
-        }
-
-        function toggleFontSize(action) {
-            var outputArea = document.getElementById("output");
-            var currentFontSize = parseFloat(window.getComputedStyle(outputArea, null).getPropertyValue('font-size'));
-
-            if (action === 'increase') {
-                outputArea.style.fontSize = (currentFontSize + 2) + 'px'; // Increase font size by 2px
-            } else if (action === 'decrease') {
-                outputArea.style.fontSize = (currentFontSize - 2) + 'px'; // Decrease font size by 2px
+            const inputText = document.getElementById('inputText').value.trim();
+            if (!inputText) {
+                showToast('Please enter some text first.');
+                return;
             }
+            const outputArea = document.getElementById('output');
+            const outputCard = document.getElementById('outputCard');
+            outputArea.innerText = inputText;
+            outputCard.style.display = 'block';
+            outputCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+
         function pasteFromClipboard() {
             navigator.clipboard.readText()
                 .then(text => {
-                    document.getElementById("inputText").value = text;
+                    document.getElementById('inputText').value = text;
+                    updateCharCount();
+                    showToast('Pasted from clipboard.');
                 })
-                .catch(err => {
-                    console.error('Failed to read clipboard contents: ', err);
+                .catch(() => {
+                    showToast('Could not access clipboard — please paste manually.');
                 });
         }
-    </script>
 
-<script>
-    let isReading = false;
-    let speech = new SpeechSynthesisUtterance();
-
-    function convertToOpenDyslexic() {
-        var inputText = document.getElementById("inputText").value;
-        var outputArea = document.getElementById("output");
-
-        outputArea.innerText = inputText;
-        outputArea.style.display = "block";
-    }
-
-    function togglePastel() {
-        document.body.classList.toggle("pastel");
-    }
-
-    function toggleInvert() {
-        document.body.classList.toggle("invert");
-    }
-
-    function toggleReadText() {
-        if (!isReading) {
-            startReading();
-        } else {
-            stopReading();
+        function copyOutput() {
+            const outputText = document.getElementById('output').innerText;
+            if (!outputText) {
+                showToast('Nothing to copy yet.');
+                return;
+            }
+            navigator.clipboard.writeText(outputText)
+                .then(() => showToast('Copied to clipboard!'))
+                .catch(() => showToast('Copy failed — please select and copy manually.'));
         }
-    }
 
-    function startReading() {
-        var textToRead = document.getElementById("output").innerText;
-        speech.text = textToRead;
-        window.speechSynthesis.speak(speech);
-        isReading = true;
-        document.getElementById("readButton").innerText = "Stop Reading";
-    }
+        function togglePastel() {
+            document.body.classList.remove('invert');
+            document.body.classList.toggle('pastel');
+            const btn = document.getElementById('pastelBtn');
+            btn.classList.toggle('active', document.body.classList.contains('pastel'));
+            document.getElementById('invertBtn').classList.remove('active');
+        }
 
-    function stopReading() {
-        window.speechSynthesis.cancel();
-        isReading = false;
-        document.getElementById("readButton").innerText = "Read Text";
-    }
-</script>
+        function toggleInvert() {
+            document.body.classList.remove('pastel');
+            document.body.classList.toggle('invert');
+            const btn = document.getElementById('invertBtn');
+            btn.classList.toggle('active', document.body.classList.contains('invert'));
+            document.getElementById('pastelBtn').classList.remove('active');
+        }
+
+        function toggleFontSize(action) {
+            const outputArea = document.getElementById('output');
+            const current = parseFloat(window.getComputedStyle(outputArea).fontSize);
+            const next = action === 'increase' ? current + 2 : Math.max(10, current - 2);
+            outputArea.style.fontSize = next + 'px';
+        }
+
+        function toggleReadText() {
+            if (!isReading) {
+                startReading();
+            } else {
+                stopReading();
+            }
+        }
+
+        function startReading() {
+            const textToRead = document.getElementById('output').innerText;
+            if (!textToRead) {
+                showToast('Convert some text first, then use Read Aloud.');
+                return;
+            }
+            speech = new SpeechSynthesisUtterance(textToRead);
+            speech.onend = () => {
+                isReading = false;
+                updateReadButton(false);
+            };
+            window.speechSynthesis.speak(speech);
+            isReading = true;
+            updateReadButton(true);
+        }
+
+        function stopReading() {
+            window.speechSynthesis.cancel();
+            isReading = false;
+            updateReadButton(false);
+        }
+
+        function updateReadButton(reading) {
+            const btn = document.getElementById('readButton');
+            const icon = document.getElementById('readIcon');
+            btn.classList.toggle('active', reading);
+            icon.className = reading ? 'fas fa-stop' : 'fas fa-play';
+            btn.querySelector('i').nextSibling.textContent = reading ? ' Stop' : ' Read Aloud';
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2800);
+        }
+    </script>
 </body>
 </html>
