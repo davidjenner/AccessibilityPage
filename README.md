@@ -6,7 +6,13 @@
 
 ## Live Demo
 
-**[Try it now →](https://davidjenner.github.io/AccessibilityPage/)**
+**[Try it now →](https://dyslexictext.netlify.app/)**
+
+---
+
+## 🎥 Video Demo
+
+![OpenDyslexic-Converter](./assets/OpenDyslexic-Converter-Demo.gif)
 
 ---
 
