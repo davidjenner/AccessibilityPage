@@ -3,70 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accessibility Focused Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>OpenDyslexic Text Converter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
     <style>
+        @font-face {
+            font-family: 'OpenDyslexic';
+            src: url('OpenDyslexic-Regular.otf') format('opentype');
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: "OpenDyslexic", Arial, sans-serif; /* Fallback font */
         }
-        .high-contrast {
-            background-color: black;
-            color: white;
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
         }
-        .dyslexia-friendly {
-            font-family: 'OpenDyslexic', sans-serif;
+        #output {
+            margin-top: 20px;
+            font-family: "OpenDyslexic", sans-serif;
+            display: none;
+        }
+        .pastel {
+            background-color: #f0f0f0; /* Soft pastel color background */
+            color: #000000; /* Black text color */
+            transition: background-color 0.5s ease; /* Smooth transition for background color change */
+        }
+        .invert {
+            background-color: #000000; /* Black background color */
+            color: #ffff00; /* Yellow text color */
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Accessibility Features</h1>
-    </header>
-    <main>
-        <section>
-            <h2>Resize Text</h2>
-            <button onclick="resizeText('increase')">A+</button>
-            <button onclick="resizeText('decrease')">A-</button>
-        </section>
-        <section>
-            <h2>Color Contrast Modes</h2>
-            <button onclick="toggleContrast()">Toggle High Contrast</button>
-        </section>
-        <section>
-            <h2>Dyslexia-Friendly Font</h2>
-            <button onclick="toggleDyslexiaFont()">Toggle Dyslexia Font</button>
-        </section>
-        <section>
-            <h2>Text-to-Speech</h2>
-            <button onclick="textToSpeech()">Read Text</button>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2026 Accessibility Page</p>
-    </footer>
+    <div class="container">
+        <h1>OpenDyslexic Text Converter</h1>
+        <p>(Beta)</p>
+        <textarea id="inputText" placeholder="Paste or type your text here..."></textarea>
+        <button onclick="pasteFromClipboard()"><i class="fas fa-clipboard"></i> Paste from Clipboard</button>
+        <button onclick="convertToOpenDyslexic()"><i class="fas fa-file-import"></i> Convert to OpenDyslexic</button>
+        <button onclick="togglePastel()"><i class="fas fa-paint-brush"></i> Toggle Pastel</button>
+        <button onclick="toggleInvert()"><i class="fas fa-adjust"></i> Toggle Invert</button>
+        <button onclick="toggleFontSize('increase')"><i class="fas fa-search-plus"></i> Increase Text Size</button>
+        <button onclick="toggleFontSize('decrease')"><i class="fas fa-search-minus"></i> Decrease Text Size</button>
+        <button onclick="toggleReadText()"><i class="fas fa-volume-up"></i> Read Text</button>
+        <div id="output"></div>
+    </div>
+
+<div  class="container">
+    <p>By David Jenner | 2024</p><br>
+    <a href="https://github.com/davidjenner/AccessibilityPage/issues">Feedback</a>
+</div>
+    
+    
     <script>
-        let currentSize = 16;
-        const resizeText = (action) => {
-            const body = document.body;
+        function convertToOpenDyslexic() {
+            var inputText = document.getElementById("inputText").value;
+            var outputArea = document.getElementById("output");
+
+            outputArea.innerText = inputText;
+            outputArea.style.display = "block";
+        }
+
+        function togglePastel() {
+            document.body.classList.toggle("pastel");
+        }
+
+        function toggleInvert() {
+            document.body.classList.toggle("invert");
+        }
+
+        function toggleFontSize(action) {
+            var outputArea = document.getElementById("output");
+            var currentFontSize = parseFloat(window.getComputedStyle(outputArea, null).getPropertyValue('font-size'));
+
             if (action === 'increase') {
-                currentSize++;
-            } else {
-                currentSize--;
+                outputArea.style.fontSize = (currentFontSize + 2) + 'px'; // Increase font size by 2px
+            } else if (action === 'decrease') {
+                outputArea.style.fontSize = (currentFontSize - 2) + 'px'; // Decrease font size by 2px
             }
-            body.style.fontSize = currentSize + 'px';
-        };
-        let highContrast = false;
-        const toggleContrast = () => {
-            document.body.classList.toggle('high-contrast');
-        };
-        let dyslexiaMode = false;
-        const toggleDyslexiaFont = () => {
-            document.body.classList.toggle('dyslexia-friendly');
-        };
-        const textToSpeech = () => {
-            const utterance = new SpeechSynthesisUtterance(document.body.innerText);
-            window.speechSynthesis.speak(utterance);
-        };
+        }
+        function pasteFromClipboard() {
+            navigator.clipboard.readText()
+                .then(text => {
+                    document.getElementById("inputText").value = text;
+                })
+                .catch(err => {
+                    console.error('Failed to read clipboard contents: ', err);
+                });
+        }
     </script>
+
+<script>
+    let isReading = false;
+    let speech = new SpeechSynthesisUtterance();
+
+    function convertToOpenDyslexic() {
+        var inputText = document.getElementById("inputText").value;
+        var outputArea = document.getElementById("output");
+
+        outputArea.innerText = inputText;
+        outputArea.style.display = "block";
+    }
+
+    function togglePastel() {
+        document.body.classList.toggle("pastel");
+    }
+
+    function toggleInvert() {
+        document.body.classList.toggle("invert");
+    }
+
+    function toggleReadText() {
+        if (!isReading) {
+            startReading();
+        } else {
+            stopReading();
+        }
+    }
+
+    function startReading() {
+        var textToRead = document.getElementById("output").innerText;
+        speech.text = textToRead;
+        window.speechSynthesis.speak(speech);
+        isReading = true;
+        document.getElementById("readButton").innerText = "Stop Reading";
+    }
+
+    function stopReading() {
+        window.speechSynthesis.cancel();
+        isReading = false;
+        document.getElementById("readButton").innerText = "Read Text";
+    }
+</script>
 </body>
 </html>
